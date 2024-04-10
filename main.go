@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/language"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -36,26 +38,21 @@ func startServer() {
 
 	template.AddComp(chartjs.NewChart())
 
-	//cfg := config.Config{
-	//	Databases: config.DatabaseList{
-	//		"default": {
-	//			Host:       "127.0.0.1",
-	//			Port:       "3306",
-	//			User:       "root",
-	//			Pwd:        "root",
-	//			Name:       "go-admin",
-	//			MaxIdleCon: 50,
-	//			MaxOpenCon: 150,
-	//			Driver:     db.DriverMysql,
-	//		},
-	//	},
-	//	UrlPrefix: "admin",
-	//	IndexUrl:  "/",
-	//	Debug:     true,
-	//	Language:  language.CN,
-	//}
+	cfg := config.Config{
+		Databases: config.DatabaseList{
+			"default": {
+				Driver: config.DriverSqlite,
+				File:   "./admin.db",
+			},
+		},
+		UrlPrefix: "admin",
+		IndexUrl:  "/",
+		Debug:     true,
+		Logo:      "<b>Go</b>AdminPanel", // change logo
+		Language:  language.EN,
+	}
 
-	if err := eng.AddConfigFromJSON("./config.json").
+	if err := eng.AddConfig(&cfg).
 		AddGenerators(tables.Generators).
 		AddGenerator("external", tables.GetExternalTable).
 		Use(r); err != nil {
@@ -74,7 +71,7 @@ func startServer() {
 	})
 
 	srv := &http.Server{
-		Addr:    ":9033",
+		Addr:    ":1234",
 		Handler: r,
 	}
 
